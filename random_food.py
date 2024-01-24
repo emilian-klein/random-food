@@ -1,4 +1,6 @@
 import tkinter as tk
+
+
 # from tkinter import *
 # from datetime import datetime
 # from quitApp import quitApp
@@ -66,46 +68,76 @@ import tkinter as tk
 
 
 class RandomFood(tk.Tk):
+    """
+    Application main class.
+    """
+
     def __init__(self):
+        """
+        Initialize the RandomFood Tkinter application. Sets up the window properties, font styles and widgets.
+        """
         super().__init__()
         self.title("Random Food")
         self.iconbitmap("images/icon.ico")
-        self.geometry("1000x600")
+        self.geometry("1100x600")
         self.resizable(False, False)
         self.sm_n_font_style = ("Bahnschrift", "11", "normal")
         self.lg_n_font_style = ("Bahnschrift", "14", "normal")
         self.sm_b_font_style = ("Bahnschrift", "11", "bold")
         self.lg_b_font_style = ("Bahnschrift", "14", "bold")
 
-        self.left_frame = tk.Frame(relief="ridge", bg="#EAD7BB")
+        self.left_frame = tk.Frame(bg="#7E7E7E")
         self.left_frame.place(x=0, y=0, height=600, width=200)
 
-        self.find_random_food_button = tk.Button(self.left_frame, text="Find random food", font=self.sm_b_font_style, relief="raised", bg="#113946", fg="white")
+        self.find_random_food_button = tk.Button(self.left_frame, text="Find random food", font=self.sm_b_font_style, relief="raised", bg="#DD771F", fg="white",
+                                                 cursor="hand2")
         self.find_random_food_button.place(x=25, y=25, height=50, width=150)
 
-        self.save_recipe_button = tk.Button(self.left_frame, text="Save recipe", font=self.sm_b_font_style, relief="raised", bg="#113946", fg="white")
+        self.save_recipe_button = tk.Button(self.left_frame, text="Save recipe", font=self.sm_b_font_style, relief="raised", bg="#DD771F", fg="white",
+                                            cursor="hand2")
         self.save_recipe_button.place(x=25, y=125, height=50, width=150)
 
-        self.exit_button = tk.Button(self.left_frame, text="Exit", font=self.sm_b_font_style, relief="raised", bg="#113946", fg="white")
+        self.exit_button = tk.Button(self.left_frame, text="Exit", font=self.sm_b_font_style, relief="raised", bg="#DD771F", fg="white", cursor="hand2")
         self.exit_button.place(x=25, y=225, height=50, width=150)
 
-        self.right_frame = tk.Frame(relief="ridge", bg="#BCA37F")
-        self.right_frame.place(x=200, y=0, height=600, width=800)
+        self.right_frame = tk.Frame()
+        self.right_frame.place(x=200, y=0, height=600, width=900)
 
-        self.dish_name_label = tk.Label(self.right_frame, text="dish_name_label", font=self.sm_n_font_style, anchor="w", bg="#BCA37F")
-        self.dish_name_label.place(x=0, y=0, height=100, width=800)
+        self.dish_title_label = tk.Label(self.right_frame, font=self.sm_n_font_style, bg="green")
+        self.dish_title_label.place(x=0, y=0, height=50, width=900)
 
-        self.dish_description_message = tk.Message(self.right_frame, text="dish_description_message", bg="#BCA37F", font=self.sm_n_font_style, justify="left")
-        self.dish_description_message.place(x=0, y=100, height=250, width=500)
+        self.dish_summary_label = tk.Label(self.right_frame, font=self.sm_n_font_style, bg="orange")
+        self.dish_summary_label.place(x=0, y=50, height=25, width=600)
+        self.dish_summary_text = tk.Text(self.right_frame, font=self.sm_n_font_style, wrap="word")
+        self.dish_summary_text.place(x=0, y=75, height=275, width=)
+        self.dish_summary_scroll = tk.Scrollbar(self.right_frame, command=self.dish_summary_text.yview)
+        self.dish_summary_scroll.place(x=480, y=100, height=250, width=20)
+        self.dish_summary_text.config(yscrollcommand=self.dish_summary_scroll.set)
+        #
+        # self.dish_ingredients_label = tk.Label(self.right_frame, font=self.sm_n_font_style, bg="blue")
+        # self.dish_ingredients_label.place(x=500, y=50, height=50, width=300)
+        # self.dish_summary_text = tk.Text(self.right_frame, font=self.sm_n_font_style, wrap="word")
+        # self.dish_summary_text.place(x=0, y=50, height=250, width=480)
+        # self.dish_summary_scroll = tk.Scrollbar(self.right_frame, command=self.dish_summary_text.yview)
+        # self.dish_summary_scroll.place(x=480, y=100, height=250, width=20)
+        # self.dish_summary_text.config(yscrollcommand=self.dish_summary_scroll.set)
 
-        self.dish_instructions_message = tk.Message(self.right_frame, text="dish_instructions_message", bg="#BCA37F", font=self.sm_n_font_style, justify="left")
-        self.dish_instructions_message.place(x=0, y=350, height=250, width=500)
+        # self.dish_instructions_text = tk.Text(self.right_frame, font=self.sm_n_font_style, state="disabled", bg="#F0F0F0", wrap="word")
+        # self.dish_instructions_text.place(x=0, y=350, height=250, width=480)
+        # self.dish_instructions_text.configure(state='normal')
+        # self.dish_instructions_text.insert("end",
+        #                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae. At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae. At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet.")
+        # self.dish_instructions_text.configure(state='normal')
+        #
+        # self.dish_ingredients_scroll = tk.Scrollbar(self.right_frame, command=self.dish_instructions_text.yview, activebackground="red")
+        # self.dish_ingredients_scroll.place(x=480, y=350, height=250, width=20)
+        # self.dish_instructions_text.config(yscrollcommand=self.dish_ingredients_scroll.set)
 
-        self.dish_ingredients_label = tk.Label(self.right_frame, text="dish_ingredients_label", bg="#BCA37F", font=self.sm_n_font_style, anchor="center")
-        self.dish_ingredients_label.place(x=500, y=100, height=50, width=100)
-
-        self.dish_ingredients_message = tk.Message(self.right_frame, text="dish_ingredients_message", bg="#BCA37F", font=self.sm_n_font_style)
-        self.dish_ingredients_message.place(x=500, y=150, height=450, width=200)
+        # self.dish_ingredients_label = tk.Label(self.right_frame, text="dish_ingredients_label", font=self.sm_n_font_style, anchor="w")
+        # self.dish_ingredients_label.place(x=500, y=100, height=50, width=300)
+        #
+        # self.dish_ingredients_message = tk.Message(self.right_frame, text="dish_ingredients_message", font=self.sm_n_font_style, anchor="w")
+        # self.dish_ingredients_message.place(x=500, y=150, height=450, width=300)
 
 
 if __name__ == "__main__":
