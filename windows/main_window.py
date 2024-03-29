@@ -54,9 +54,8 @@ class MainWindow(tk.Tk):
         self.recipe_title_header = TitleLabel(self.right_frame, text="Title")
         self.recipe_title_header.pack(fill="x")
 
-        self.recipe_image = ImageTk.PhotoImage(Image.open("images/icon.ico"))
-        self.recipe_image_content = tk.Label(self.right_frame, image=self.recipe_image, bg="#d1d1d1")
-        self.recipe_image_content.pack(fill="x")
+        self.recipe_image = tk.Label(self.right_frame, bg="#d1d1d1")
+        self.recipe_image.pack(fill="x")
 
         self.recipe_description_header = TitleLabel(self.right_frame, text="Description")
         self.recipe_description_header.pack(fill="x")
@@ -64,14 +63,14 @@ class MainWindow(tk.Tk):
         self.recipe_description_content = ContentLabel(self.right_frame, text="Description text")
         self.recipe_description_content.pack(fill="x")
 
-        self.recipe_instructions_header = TitleLabel(self.right_frame, text="Instructions")
-        self.recipe_instructions_header.pack(fill="x")
-
-        self.recipe_instructions_content = ContentLabel(self.right_frame, text="Instructions text")
-        self.recipe_instructions_content.pack(fill="x")
-
         self.recipe_ingredients_header = TitleLabel(self.right_frame, text="Ingredients")
         self.recipe_ingredients_header.pack(fill="x")
 
         self.recipe_ingredients_content = ContentLabel(self.right_frame, text="Ingredients text")
         self.recipe_ingredients_content.pack(fill="x")
+
+        self.recipe_instructions_header = TitleLabel(self.right_frame, text="Instructions")
+        self.recipe_instructions_header.pack(fill="x")
+
+        self.recipe_instructions_content = ContentLabel(self.right_frame, text="Instructions text")
+        self.recipe_instructions_content.pack(fill="x")

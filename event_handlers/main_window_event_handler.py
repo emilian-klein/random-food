@@ -1,6 +1,6 @@
 import textwrap
 import requests as requests
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 from bs4 import BeautifulSoup
 from PIL import ImageTk, Image
 
@@ -12,77 +12,72 @@ from windows.settings_window import SettingsWindow
 
 class MainWindowEventHandler(EventHandler):
     def find_random_recipe(self):
+        # try:
         recipe_data = self.get_recipe_data()
         recipe = self.create_recipe(recipe_data)
         self.format_recipe(recipe)
         self.update_fields(recipe)
+        # except Exception:
+        #     messagebox.showwarning("Error", f"Error occurred! Your API key might be invalid!")
 
     def get_recipe_data(self):
         api_url = self.get_value_from_configuration("recipe_api_url")
         api_key = self.get_value_from_configuration("api_key")
         api_endpoint = api_url.format(api_key)
-        try:
-            response = requests.get(api_endpoint)
+        response = requests.get(api_endpoint)
 
-            return response.json()["recipes"][0]
-        except Exception as e:
-            messagebox.showwarning("Error", f"Error: {e}!")
-
-            return None
+        return response.json()["recipes"][0]
 
     def create_recipe(self, recipe_data):
         title = self.get_recipe_title(recipe_data)
         image = self.get_recipe_image(recipe_data)
         description = self.get_recipe_description(recipe_data)
-        instructions = self.get_recipe_instructions(recipe_data)
         ingredients = self.get_recipe_ingredients(recipe_data)
+        instructions = self.get_recipe_instructions(recipe_data)
 
-        return Recipe(title=title, image=image, description=description, instructions=instructions, ingredients=ingredients)
+        return Recipe(title=title, image=image, description=description, ingredients=ingredients, instructions=instructions)
 
     def get_recipe_title(self, recipe_data):
         return recipe_data.get("title", "")
 
     def get_recipe_image(self, recipe_data):
         image_link = recipe_data.get("image", "")
-        try:
-            response = requests.get(image_link)
-            with open("images/recipe_image.jpg", "wb") as file:
-                file.write(response.content)
+        response = requests.get(image_link)
+        with open("images/recipe_image.jpg", "wb") as file:
+            file.write(response.content)
 
-            return "foo"
-        except Exception as e:
-            messagebox.showwarning("Error", f"Error: {e}!")
-
-            return None
+        return image_link
 
     def get_recipe_description(self, recipe_data):
         return recipe_data.get("summary", "")
+
+    def get_recipe_ingredients(self, recipe_data):
+        return recipe_data.get("extendedIngredients", [])
 
     def get_recipe_instructions(self, recipe_data):
         recipe_id = recipe_data.get("id", "")
         api_url = self.get_value_from_configuration("recipe_instructions_api_url")
         api_key = self.get_value_from_configuration("api_key")
         api_endpoint = api_url.format(recipe_id, api_key)
-        try:
-            response = requests.get(api_endpoint)
+        response = requests.get(api_endpoint)
 
-            return response.json()[0].get("steps", [])
-        except requests.HTTPError as exception:
-            messagebox.showwarning("Error", f"Error: {exception}")
-
-    def get_recipe_ingredients(self, recipe_data):
-        return recipe_data.get("extendedIngredients", [])
+        return response.json()[0].get("steps", [])
 
     def format_recipe(self, recipe):
         recipe.title = self.format_recipe_title(recipe.title)
         recipe.description = self.format_recipe_description(recipe.description)
-        recipe.instructions = self.format_recipe_instructions(recipe.instructions)
         recipe.ingredients = self.format_recipe_ingredients(recipe.ingredients)
+        recipe.instructions = self.format_recipe_instructions(recipe.instructions)
 
     def format_recipe_title(self, title):
         title = self.remove_html_tags(title)
 
         return title
+
+    def remove_html_tags(self, text):
+        text_formatter = BeautifulSoup(text, "html.parser")
+
+        return text_formatter.get_text()
 
     def format_recipe_description(self, description):
         description = self.remove_html_tags(description)
@@ -93,18 +88,10 @@ class MainWindowEventHandler(EventHandler):
         return description
 
     def wrap_text(self, text_to_wrap):
-        wrapper = textwrap.TextWrapper(width=120)
+        wrapper = textwrap.TextWrapper(width=130)
         wrapped_text = wrapper.wrap(text=text_to_wrap)
 
         return "\n".join(wrapped_text)
-
-    def format_recipe_instructions(self, instructions):
-        listed_instructions = []
-        for instruction in instructions:
-            listed_instructions.append(self.wrap_text(f"{instruction['number']}. {instruction['step']}"))
-        instructions = "\n".join(listed_instructions)
-
-        return instructions
 
     def format_recipe_ingredients(self, ingredients):
         list_char = u"\u2022"
@@ -115,42 +102,46 @@ class MainWindowEventHandler(EventHandler):
 
         return ingredients
 
-    def remove_html_tags(self, text):
-        text_formatter = BeautifulSoup(text, "html.parser")
+    def format_recipe_instructions(self, instructions):
+        listed_instructions = []
+        for instruction in instructions:
+            listed_instructions.append(f"{instruction['number']}. {instruction['step']}")
+        instructions = "\n".join(listed_instructions)
 
-        return text_formatter.get_text()
+        return instructions
 
     def update_fields(self, recipe):
-        self.update_label_field(self.window.recipe_title_header, recipe.title)
-        self.update_label_field(self.window.recipe_description_content, recipe.description)
-        self.update_label_field(self.window.recipe_instructions_content, recipe.instructions)
-        self.update_label_field(self.window.recipe_ingredients_content, recipe.ingredients)
-        new_image = ImageTk.PhotoImage(Image.open("images/recipe_image.jpg"))
-        self.window.recipe_image_content.config(image=new_image)
-        self.window.recipe_image_content.image = new_image
+        self.update_label_field(self.window.recipe_title_header, new_text=recipe.title)
+        self.update_label_field(self.window.recipe_description_content, new_text=recipe.description)
+        self.update_label_field(self.window.recipe_instructions_content, new_text=recipe.instructions)
+        self.update_label_field(self.window.recipe_ingredients_content, new_text=recipe.ingredients)
+        self.update_label_field(self.window.recipe_image, path_to_image="images/recipe_image.jpg")
 
-    def update_label_field(self, label_field, new_text):
-        label_field.config(text=new_text)
-
-    # def save_recipe(self):
-    #     recipe_title = self.app.recipe_title_label.cget("text")
-    #     recipe_summary = self.app.recipe_summary_text.get(1.0, "end")
-    #     recipe_instructions = self.app.recipe_instructions_text.get(1.0, "end")
-    #     recipe_ingredients = self.app.recipe_ingredients_text.get(1.0, "end")
-    #     file_types = [("Text Document", "*.txt"), ("Word Document", "*.docx"), ("All Files", "*.*")]
-    #     file = asksaveasfile(filetypes=file_types)
-    #     recipe = open(file.name, "w")
-    #     recipe.write(recipe_title + "\n" + recipe_summary + "\n\nIngredients:\n" + recipe_ingredients + "\n\nInstructions:\n" + recipe_instructions)
-    #     recipe.close()
-
-    def open_settings(self):
-        settings_window = SettingsWindow(self.window)
-
-    def open_about(self):
-        about_window = AboutWindow(self.window)
-
-    def exit(self):
-        self.window.destroy()
+    def update_label_field(self, label_field, new_text=None, path_to_image=None):
+        if new_text:
+            label_field.config(text=new_text)
+        if path_to_image:
+            new_image = Image.open(path_to_image)
+            new_image.thumbnail((300, 300))
+            img = ImageTk.PhotoImage(new_image)
+            self.window.recipe_image.config(image=img)
+            self.window.recipe_image.image = img
 
     def save_recipe(self):
+        title = self.window.recipe_title_header.cget("text")
+        description = self.window.recipe_description_content.cget("text").replace("\n", " ")
+        ingredients = self.window.recipe_ingredients_content.cget("text")
+        instructions = self.window.recipe_instructions_content.cget("text")
+        file_types = [("Text Document", "*.txt"), ("Word Document", "*.docx"), ("All Files", "*.*")]
+        file = filedialog.asksaveasfile(filetypes=file_types, defaultextension="txt")
+        with open(file.name, "w") as recipe_file:
+            recipe_file.write(title + "\n" + description + "\n\nIngredients:\n" + ingredients + "\n\nInstructions:\n" + instructions)
+
+    def open_settings(self):
+        SettingsWindow(self.window)
+
+    def open_about(self):
+        AboutWindow(self.window)
+
+    def exit(self):
         self.window.destroy()

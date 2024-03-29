@@ -6,5 +6,5 @@ class Recipe:
     title: str
     image: str
     description: str
-    instructions: list
     ingredients: list
+    instructions: list
