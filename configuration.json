@@ -1,5 +1,5 @@
 {
     "api_key": "",
-    "base_api_url": "https://api.spoonacular.com/recipes/random?number=1&apiKey={}",
-    "additional_api_url": "https://api.spoonacular.com/recipes/{}/analyzedInstructions?apiKey={}"
+    "recipe_api_url": "https://api.spoonacular.com/recipes/random?number=1&apiKey={}",
+    "recipe_instructions_api_url": "https://api.spoonacular.com/recipes/{}/analyzedInstructions?apiKey={}"
 }

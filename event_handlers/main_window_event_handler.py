@@ -2,9 +2,10 @@ import textwrap
 import requests as requests
 from tkinter import messagebox
 from bs4 import BeautifulSoup
+from PIL import ImageTk, Image
 
 from event_handlers.event_handler import EventHandler
-from data_models.recipe import Recipe
+from entity.recipe import Recipe
 from windows.about_window import AboutWindow
 from windows.settings_window import SettingsWindow
 
@@ -17,33 +18,49 @@ class MainWindowEventHandler(EventHandler):
         self.update_fields(recipe)
 
     def get_recipe_data(self):
-        api_url = self.get_value_from_configuration("base_api_url")
+        api_url = self.get_value_from_configuration("recipe_api_url")
         api_key = self.get_value_from_configuration("api_key")
         api_endpoint = api_url.format(api_key)
         try:
             response = requests.get(api_endpoint)
 
             return response.json()["recipes"][0]
-        except requests.HTTPError as exception:
-            messagebox.showwarning("Error", f"Error: {exception}")
+        except Exception as e:
+            messagebox.showwarning("Error", f"Error: {e}!")
+
+            return None
 
     def create_recipe(self, recipe_data):
         title = self.get_recipe_title(recipe_data)
+        image = self.get_recipe_image(recipe_data)
         description = self.get_recipe_description(recipe_data)
         instructions = self.get_recipe_instructions(recipe_data)
         ingredients = self.get_recipe_ingredients(recipe_data)
 
-        return Recipe(title=title, description=description, instructions=instructions, ingredients=ingredients)
+        return Recipe(title=title, image=image, description=description, instructions=instructions, ingredients=ingredients)
 
     def get_recipe_title(self, recipe_data):
         return recipe_data.get("title", "")
+
+    def get_recipe_image(self, recipe_data):
+        image_link = recipe_data.get("image", "")
+        try:
+            response = requests.get(image_link)
+            with open("images/recipe_image.jpg", "wb") as file:
+                file.write(response.content)
+
+            return "foo"
+        except Exception as e:
+            messagebox.showwarning("Error", f"Error: {e}!")
+
+            return None
 
     def get_recipe_description(self, recipe_data):
         return recipe_data.get("summary", "")
 
     def get_recipe_instructions(self, recipe_data):
         recipe_id = recipe_data.get("id", "")
-        api_url = self.get_value_from_configuration("additional_api_url")
+        api_url = self.get_value_from_configuration("recipe_instructions_api_url")
         api_key = self.get_value_from_configuration("api_key")
         api_endpoint = api_url.format(recipe_id, api_key)
         try:
@@ -108,6 +125,9 @@ class MainWindowEventHandler(EventHandler):
         self.update_label_field(self.window.recipe_description_content, recipe.description)
         self.update_label_field(self.window.recipe_instructions_content, recipe.instructions)
         self.update_label_field(self.window.recipe_ingredients_content, recipe.ingredients)
+        new_image = ImageTk.PhotoImage(Image.open("images/recipe_image.jpg"))
+        self.window.recipe_image_content.config(image=new_image)
+        self.window.recipe_image_content.image = new_image
 
     def update_label_field(self, label_field, new_text):
         label_field.config(text=new_text)
