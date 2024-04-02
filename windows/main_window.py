@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from PIL import ImageTk, Image
+
 from custom_widgets.menu_button import MenuButton
 from custom_widgets.content_label import ContentLabel
 from custom_widgets.title_label import TitleLabel
@@ -51,26 +51,28 @@ class MainWindow(tk.Tk):
         self.right_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
         self.canvas.bind("<Configure>", lambda e: self.canvas.itemconfig(self.canvas_frame, width=e.width))
 
-        self.recipe_title_header = TitleLabel(self.right_frame, text="Title")
+        self.recipe_title_header = TitleLabel(self.right_frame, text="Welcome in Random Recipe!")
         self.recipe_title_header.pack(fill="x")
 
         self.recipe_image = tk.Label(self.right_frame, bg="#d1d1d1")
         self.recipe_image.pack(fill="x")
 
-        self.recipe_description_header = TitleLabel(self.right_frame, text="Description")
+        self.recipe_description_header = TitleLabel(self.right_frame)
         self.recipe_description_header.pack(fill="x")
 
-        self.recipe_description_content = ContentLabel(self.right_frame, text="Description text")
+        self.recipe_description_content = ContentLabel(self.right_frame)
         self.recipe_description_content.pack(fill="x")
 
-        self.recipe_ingredients_header = TitleLabel(self.right_frame, text="Ingredients")
+        self.recipe_ingredients_header = TitleLabel(self.right_frame)
         self.recipe_ingredients_header.pack(fill="x")
 
-        self.recipe_ingredients_content = ContentLabel(self.right_frame, text="Ingredients text")
+        self.recipe_ingredients_content = ContentLabel(self.right_frame)
         self.recipe_ingredients_content.pack(fill="x")
 
-        self.recipe_instructions_header = TitleLabel(self.right_frame, text="Instructions")
+        self.recipe_instructions_header = TitleLabel(self.right_frame)
         self.recipe_instructions_header.pack(fill="x")
 
-        self.recipe_instructions_content = ContentLabel(self.right_frame, text="Instructions text")
+        self.recipe_instructions_content = ContentLabel(self.right_frame)
         self.recipe_instructions_content.pack(fill="x")
+
+        self.event_handler.disable_button(self.save_recipe_button)

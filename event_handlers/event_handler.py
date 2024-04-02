@@ -17,3 +17,9 @@ class EventHandler:
 
     def get_sv_value(self, sv):
         return sv.get()
+
+    def disable_button(self, button):
+        button.configure(state="disabled")
+
+    def enable_button(self, button):
+        button.configure(state="normal")
