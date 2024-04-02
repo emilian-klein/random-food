@@ -1,6 +1,5 @@
 ### Random Recipe
-The Random Recipe is a simple Tkinter application that allows users to search for random dish recipe and later save it in text format.  
-Recipe data is fetched from Spoonacular API.
+The Random Recipe is a simple Tkinter application that allows users to search for random dish recipe and later save it in text format. Recipe data is fetched from Spoonacular API.
 <p align="center">
     <img src="images/screenshots/app.png">
 </p>
