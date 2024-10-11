@@ -75,4 +75,10 @@ class MainWindow(tk.Tk):
         self.recipe_instructions_content = ContentLabel(self.right_frame)
         self.recipe_instructions_content.pack(fill="x")
 
+        self.recipe_source_header = TitleLabel(self.right_frame)
+        self.recipe_source_header.pack(fill="x")
+
+        self.recipe_source_content = ContentLabel(self.right_frame)
+        self.recipe_source_content.pack(fill="x")
+
         self.event_handler.disable_button(self.save_recipe_button)

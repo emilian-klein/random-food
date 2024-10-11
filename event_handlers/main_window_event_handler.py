@@ -37,7 +37,8 @@ class MainWindowEventHandler(EventHandler):
         description = self.get_recipe_description(recipe_data)
         ingredients = self.get_recipe_ingredients(recipe_data)
         instructions = self.get_recipe_instructions(recipe_data)
-        return Recipe(title=title, image=image, description=description, ingredients=ingredients, instructions=instructions)
+        source_url = self.get_recipe_source_url(recipe_data)
+        return Recipe(title=title, image=image, description=description, ingredients=ingredients, instructions=instructions, source_url=source_url)
 
     def get_recipe_title(self, recipe_data):
         return recipe_data.get("title", "")
@@ -63,15 +64,20 @@ class MainWindowEventHandler(EventHandler):
         response = requests.get(api_endpoint)
         return response.json()[0].get("steps", [])
 
+    def get_recipe_source_url(self, recipe_data):
+        return recipe_data.get("sourceUrl", "")
+
     def update_fields_in_window(self):
         self.update_label_field(self.window.recipe_title_header, new_text=self.format_recipe_title(self.recipe.title))
+        self.update_label_field(self.window.recipe_image, new_image="images/recipe_image.jpg")
         self.update_label_field(self.window.recipe_description_header, new_text="Description")
         self.update_label_field(self.window.recipe_description_content, new_text=self.format_recipe_description(self.recipe.description, "window"))
         self.update_label_field(self.window.recipe_ingredients_header, new_text="Ingredients")
         self.update_label_field(self.window.recipe_ingredients_content, new_text=self.format_recipe_ingredients(self.recipe.ingredients))
         self.update_label_field(self.window.recipe_instructions_header, new_text="Instructions")
         self.update_label_field(self.window.recipe_instructions_content, new_text=self.format_recipe_instructions(self.recipe.instructions, "window"))
-        self.update_label_field(self.window.recipe_image, new_image="images/recipe_image.jpg")
+        self.update_label_field(self.window.recipe_source_header, new_text="Recipe source")
+        self.update_label_field(self.window.recipe_source_content, new_text=self.recipe.source_url)
 
     def update_label_field(self, label_field, new_text=None, new_image=None):
         if new_text:
@@ -136,16 +142,16 @@ class MainWindowEventHandler(EventHandler):
         description = self.format_recipe_description(self.recipe.description, "file")
         ingredients = self.format_recipe_ingredients(self.recipe.ingredients)
         instructions = self.format_recipe_instructions(self.recipe.instructions, "file")
+        source_url = self.recipe.source_url
         file_types = [("Text Document", "*.txt"), ("Word Document", "*.docx"), ("All Files", "*.*")]
         file = filedialog.asksaveasfile(filetypes=file_types, defaultextension="txt")
         if file:
             with open(file.name, "w", encoding="utf-8") as recipe_file:
-                print(title, file=recipe_file)
-                print(description + "\n", file=recipe_file)
-                print("Ingredients", file=recipe_file)
-                print(ingredients + "\n", file=recipe_file)
-                print("Instructions", file=recipe_file)
-                print(instructions, file=recipe_file)
+                recipe_file.write(title + "\n\n")
+                recipe_file.write(description + "\n\n")
+                recipe_file.write("Ingredients" + "\n" + ingredients + "\n\n")
+                recipe_file.write("Instructions" + "\n" + instructions + "\n\n")
+                recipe_file.write("Link to original recipe: " + source_url)
             messagebox.showinfo("Information", "Recipe has been saved!")
 
     def open_settings(self):

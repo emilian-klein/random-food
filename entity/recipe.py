@@ -9,3 +9,4 @@ class Recipe:
     description: str = ""
     ingredients: List[str] = field(default_factory=list)
     instructions: List[str] = field(default_factory=list)
+    source_url: str = ""
