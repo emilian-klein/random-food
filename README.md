@@ -5,6 +5,11 @@ Recipe data is fetched from Spoonacular API.
     <img src="images/screenshots/app.png">
 </p>
 
+### Required Python version
+```
+>=3.8.0
+```
+
 ### Setup
 1. Clone this repository or download ZIP file:
 ```
